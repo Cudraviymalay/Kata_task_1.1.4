@@ -8,18 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserServiceImpl implements UserService {
-    Connection connection;
-
-    {
-        try {
-            connection = Util.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public void createUsersTable() {
-        try (Statement statement = connection.createStatement()) {
+        try (Statement statement = Util.getConnection().createStatement()) {
             statement.executeUpdate("CREATE TABLE IF NOT EXISTS Users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(45) NOT NULL, lastName VARCHAR(45) NOT NULL, age INT);");
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -27,7 +18,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public void dropUsersTable() {
-        try (Statement statement = connection.createStatement()) {
+        try (Statement statement = Util.getConnection().createStatement()) {
             statement.executeUpdate("DROP TABLE IF EXISTS Users;");
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -35,8 +26,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public void saveUser(String name, String lastName, byte age) {
-        String saveUser = "insert into Users values (id, ?, ?, ?);";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(saveUser)) {
+        try (PreparedStatement preparedStatement = Util.getConnection().prepareStatement("insert into Users values (id, ?, ?, ?);")) {
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, lastName);
             preparedStatement.setByte(3, age);
@@ -47,8 +37,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public void removeUserById(long id) {
-        String removeUserById = "delete from Users where id = ?;";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(removeUserById)) {
+        try (PreparedStatement preparedStatement = Util.getConnection().prepareStatement("delete from Users where id = ?;")) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -59,7 +48,7 @@ public class UserServiceImpl implements UserService {
     public List<User> getAllUsers() {
         List<User> allUsers = new ArrayList<>();
 
-        try (Statement statement = connection.createStatement()) {
+        try (Statement statement = Util.getConnection().createStatement()) {
             ResultSet resultSet = statement.executeQuery("select * from Users");
 
             while (resultSet.next()) {
@@ -76,7 +65,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public void cleanUsersTable() {
-        try (Statement statement = connection.createStatement()) {
+        try (Statement statement = Util.getConnection().createStatement()) {
             statement.executeUpdate("TRUNCATE TABLE Users;");
         } catch (SQLException e) {
             throw new RuntimeException(e);
