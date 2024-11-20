@@ -24,7 +24,6 @@ public class Util {
 
     public static SessionFactory getSessionFactory() {
 
-        try {
             Configuration configuration = new Configuration();
 
             configuration.setProperty("hibernate.connection.url", URL);
@@ -37,9 +36,7 @@ public class Util {
             configuration.addAnnotatedClass(User.class);
 
             sessionFactory = configuration.buildSessionFactory();
-        } catch (Throwable ex) {
-            throw new ExceptionInInitializerError(ex);
-        }
+
         return sessionFactory;
     }
 }
